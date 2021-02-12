@@ -1,39 +1,45 @@
 from discord.ext import commands
 
 
-class StandardCommands(commands.Cog):
+def send_msg():
+    """
+    Example on a check to make sure the bot itself can send messages in issued channel
+    """
+    def predicate(ctx):
+        return ctx.channel.permissions_for(ctx.guild.me).send_messages
+
+    return commands.check(predicate)
+
+
+class StandardCommands(commands.Cog, name='Standard'):
     """
     A standard cog example. With more standard Examples for examples
     """
 
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self, client):
+        self.client = client
 
     """
     A standard command example
     """
+
     @commands.command(name='ping')  # You can name the command function here
-    async def _example1_(self, ctx):
+    @send_msg()
+    async def _example1(self, ctx):
         """
-        Responds with Ping!
+        Responds with Pong!
         """
-        await ctx.send('Ping!')
+        await ctx.send('Pong!')
 
-    """
-    Now, lets say you have a discord with standard members and moderators moderating chat and admins
-    And those moderators need to set the channel slow mode delay
-    """
-    @commands.command(name='slowmode', aliases=['slowmo', 'sm'])  # command aliases can be in a list
-    @commands.check_any(commands.has_any_role('Moderator', 'Owner', 'Moderators', 'Admins', 'Admin'))
-    # ^ this checks to see if the user is a moderator or something. (by role)
-    @commands.has_permissions(manage_messages=True, manage_channels=True)
-    # ^ if you have either of these permissions you can manually set the delay without the bot.
-    async def _example2_(self, ctx, delay: int):
+    @commands.command(name='latency')
+    @send_msg()
+    async def _example2(self, ctx):
         """
-        Sets the slowmode of the current chat to 'delay'
+        Responds with the client's latency
         """
-        await ctx.channel.edit(slowmode_delay=delay)
+        latency = round(self.client.latency * 1000)
+        await ctx.send(f'Clients latency `{latency}ms`')
 
 
-def setup(bot):
-    bot.add_cog(StandardCommands(bot))
+def setup(client):
+    client.add_cog(StandardCommands(client))

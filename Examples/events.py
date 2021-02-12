@@ -15,8 +15,8 @@ async def check_blacklist(message):
 
 
 class Events(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self, client):
+        self.client = client
 
     @commands.Cog.listener(name='on_message')
     async def _message_send(self, message):
@@ -49,6 +49,13 @@ class Events(commands.Cog):
         else:
             print(f"Error: {error}")
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        """
+        Will print out to console what user the bot is logged into when the client is ready
+        """
+        print(f'Logged in as {self.client.user}')
 
-def setup(bot):
-    bot.add_cog(Events(bot))
+
+def setup(client):
+    client.add_cog(Events(client))

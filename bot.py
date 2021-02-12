@@ -8,30 +8,26 @@ def get_prefix(client, message):
     client = bot, sometimes I use them interchangeably. Sorry in advanced
     """
     prefix = '-'  # can be whatever prefix or call another function
-    return prefix
+    return commands.when_mentioned_or(prefix)(client, message)
 
 
-bot = commands.Bot(command_prefix=get_prefix)
+client = commands.Bot(command_prefix=get_prefix)
 
 
 def initialize():
     """
     This function will try to initiate any Cogs if it can, otherwise will output an error
     """
-    # done; finished. Todo; main, events
-    extensions = [
-        'Examples.Loader',  # To load extensions, you must do FolderName.FileName without .py
-        'Examples.main',
-        'Examples.events'
-    ]
+    extensions = open('config/cogs', 'r').readlines()  # allows bot to read extensions from file.
     for extension in extensions:
+        extension = extension.replace('\n', '')
         try:
-            bot.load_extension(extension)
+            client.load_extension(extension)
             print(f'Loaded {extension}')  # console output is nice sometimes
         except Exception as e:
             print(f'Failed to load {extension}. Error {e}')
 
 
-initialize()  # will load extension cogs before attempting to login to discord
-#bot.run('a_really_neat_token')  # example login, not recomended
-bot.run(open('login', 'r').read())  # much better login
+initialize()  # will load extension cogs
+#bot.run('a_really_neat_token')  # example login, not recommended
+client.run(open('config/login', 'r').read(), reconnect=True)  # much better login

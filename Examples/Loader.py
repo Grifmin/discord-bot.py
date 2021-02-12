@@ -10,8 +10,8 @@ def is_owner():
         """
         This will get the ctx from the command check. (ie: you can use all ctx.message, author, etc methods)
         """
-        owner_id = 12345
-        return ctx.author.id == owner_id
+        owner_id = [12345]
+        return ctx.author.id in owner_id
 
     return commands.check(predicate)
 
@@ -24,18 +24,18 @@ class Loader(commands.Cog, command_attrs=dict(hidden=True)):
     Instead of using 'hidden=True' for each command you want hidden
     """
 
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self, client):
+        self.client = client
 
     @commands.command(name='load')  # sets up command, can define name
     @commands.is_owner()  # only the bot owner can run these.
-    async def _load(self, ctx, cog: str):
+    async def _load(self, ctx, cog: str = None):
         """
         Will attempt to load cog if it can
         """
         if cog is not None:
             try:
-                self.bot.load_extension(cog)
+                self.client.load_extension(cog)
                 await ctx.send(f'Loaded {cog}')
             except Exception as e:
                 await ctx.send(f'Error while loading {cog}. `{e}`')
@@ -43,32 +43,32 @@ class Loader(commands.Cog, command_attrs=dict(hidden=True)):
 
     @commands.command(name='reload')
     @commands.check(is_owner())  # in case you want to set up your own check
-    async def _reload(self, ctx, cog: str):
+    async def _reload(self, ctx, cog: str = None):
         """
         Will attempt to reload cog if specified.
         Otherwise will reload all currently loaded cogs if it can.
         """
         if cog in ['*', '', None]:
-            extensions_dat = self.bot.extensions
+            extensions_dat = self.client.extensions
             extensions = list(extensions_dat.keys())
             total, reloaded = len(extensions), 0
             for extension in extensions:
                 try:
-                    self.bot.reload_extension(extension)
+                    self.client.reload_extension(extension)
                     reloaded += 1
                 except Exception as e:
                     await ctx.send(f'Error while reloading {extension}. `{e}`')
             await ctx.send(f'Reloaded {reloaded} of {total} Cogs')
         else:
             try:
-                self.bot.reload_extension(cog)
+                self.client.reload_extension(cog)
                 await ctx.send(f'Reloaded {cog}')
             except Exception as e:
                 await ctx.send(f'Error could not reload {cog}; `{e}`')
 
     @commands.command(name='unload')
     @commands.check(is_owner())
-    async def _unload(self, ctx, cog: str):
+    async def _unload(self, ctx, cog: str = None):
         """
         Will attempt to unload specific cog.
         """
@@ -89,12 +89,12 @@ class Loader(commands.Cog, command_attrs=dict(hidden=True)):
         cog_keys = list(cogs)
         message = "**Cogs**: "
         for cog_name in cog_keys:
-            message += f"{cog_name}"
+            message += f"`{cog_name}` "
         await ctx.send(message)
 
 
-def setup(bot):
+def setup(client):
     """
     All cogs must have this setup function.
     """
-    bot.add_cog(Loader(bot))
+    client.add_cog(Loader(client))
