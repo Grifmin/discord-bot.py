@@ -7,11 +7,14 @@ async def check_blacklist(message):
     An example of a blacklisting words
     """
     message_str = message.content
-    blacklist = ['yeeteth', 'blacklisted_word']  # not a great example, but you can technically do this
+    # not a great example, but you can technically do this
+    blacklist = {'yeeteth', 'blacklisted_word'}  # sets are faster
+
     # ideally, should open this list from a file
     for i in blacklist:
         if i.lower() in message_str.lower():  # want to make sure they are both lowercase
             await message.delete()  # delete the blacklisted word
+            break  # dont continue to check.
 
 
 class Events(commands.Cog):

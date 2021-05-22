@@ -10,7 +10,7 @@ class Moderation(commands.Cog):
 
     def __init__(self, client):
         self.client = client
-        self.purge_delay = 9
+        self.purge_delay = 15
 
     @commands.command(name='slowmode', aliases=['slowmo', 'sm'])  # command aliases can be in a list
     @commands.has_permissions(manage_messages=True, manage_channels=True)
@@ -33,7 +33,7 @@ class Moderation(commands.Cog):
         A user can be specified for messages to be removed.
         """
 
-        class Purge(object):  # example of a command utilizing a command
+        class Purge(object):  # example of a command utilizing a subclass
             """
             Needed to setup a subclass to manage itself
             Couldn't figure out another way to do this, so instead i just setup this temporary class
