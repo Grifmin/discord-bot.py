@@ -1,4 +1,4 @@
-import os
+import os, discord
 from discord.ext import commands
 
 
@@ -13,6 +13,8 @@ def prefix(client, message):
     return commands.when_mentioned_or(return_prefix)(client, message)
 
 TOKEN = ''  # define as blank for now.
+
+INTENTS = discord.Intents.all()
 
 try:  # this block of try statements is to attempt and obtain a token.
     TOKEN = os.getenv['TOKEN']
