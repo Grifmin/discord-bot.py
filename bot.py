@@ -4,10 +4,10 @@ import Examples
 
 
 def main():
-    '''Main'''
-    client = commands.Bot(command_prefix=config.prefix, strip_after_prefix=True)
-    Examples.load(client)
-    client.run(config.TOKEN, reconnect=True)
+    '''Main function'''
+    client = commands.Bot(command_prefix=config.prefix, intents=config.INTENTS)
+    Examples.load(client)  # loads cogs and other events
+    client.run(config.TOKEN, reconnect=True)  # start bot
 
 if __name__ == '__main__':
     '''Starts the bot'''
